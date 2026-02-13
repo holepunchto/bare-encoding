@@ -1,6 +1,6 @@
 {
   "name": "bare-encoding",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "WHATWG text encoding interfaces for JavaScript",
   "exports": {
     "./package": "./package.json",
