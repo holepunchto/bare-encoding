@@ -16,11 +16,7 @@ exports.TextEncoder = class TextEncoder {
   // https://encoding.spec.whatwg.org/#dom-textencoder-encodeinto
   encodeInto(input, destination) {
     if (ArrayBuffer.isView(destination)) {
-      destination = Buffer.from(
-        destination.buffer,
-        destination.byteOffset,
-        destination.byteLength
-      )
+      destination = Buffer.from(destination.buffer, destination.byteOffset, destination.byteLength)
     } else {
       destination = Buffer.from(destination)
     }
