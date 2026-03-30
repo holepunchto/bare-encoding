@@ -1,5 +1,5 @@
 const test = require('brittle')
-const { TextEncoder, TextDecoder } = require('.')
+const { TextEncoder, TextDecoder, TextEncoderStream, TextDecoderStream } = require('.')
 
 test('TextEncoder', (t) => {
   const str = 'Hello 😄'
@@ -28,4 +28,40 @@ test('TextDecoder', (t) => {
 
   t.is(dec.decode(buf.subarray(0, 7), { stream: true }), 'Hello ')
   t.is(dec.decode(buf.subarray(7), { stream: true }), '😄')
+})
+
+test('TextEncoderStream', async (t) => {
+  t.plan(3)
+
+  const stream = new TextEncoderStream()
+
+  t.is(stream.encoding, 'utf-8')
+
+  const writer = stream.writable.getWriter()
+  const reader = stream.readable.getReader()
+
+  writer.write('€')
+  writer.close()
+
+  t.alike(await reader.read(), { value: Buffer.of(0xe2, 0x82, 0xac), done: false })
+  t.alike(await reader.read(), { value: undefined, done: true })
+})
+
+test('TextDecoderStream', async (t) => {
+  t.plan(3)
+
+  const stream = new TextDecoderStream()
+
+  t.is(stream.encoding, 'utf-8')
+
+  const writer = stream.writable.getWriter()
+  const reader = stream.readable.getReader()
+
+  writer.write(Buffer.of(0xe2))
+  writer.write(Buffer.of(0x82))
+  writer.write(Buffer.of(0xac))
+  writer.close()
+
+  t.alike(await reader.read(), { value: '€', done: false })
+  t.alike(await reader.read(), { value: undefined, done: true })
 })
