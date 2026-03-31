@@ -51,6 +51,6 @@
     }
   },
   "dependencies": {
-    "bare-stream": "^2.11.0"
+    "bare-stream": "^2.12.0"
   }
 }
