@@ -1,4 +1,5 @@
 import Buffer from 'bare-buffer'
+import { ReadableStream, WritableStream } from 'bare-stream/web'
 
 export interface TextEncoder {
   readonly encoding: 'utf-8'
@@ -24,3 +25,19 @@ export interface TextDecoder {
 export class TextDecoder {
   constructor(label?: string)
 }
+
+export interface TextEncoderStream {
+  readonly encoding: 'utf-8'
+  readonly readable: ReadableStream
+  readonly writable: WritableStream
+}
+
+export class TextEncoderStream {}
+
+export interface TextDecoderStream {
+  readonly encoding: 'utf-8'
+  readonly readable: ReadableStream
+  readonly writable: WritableStream
+}
+
+export class TextDecoderStream {}

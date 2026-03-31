@@ -2,6 +2,8 @@ const UTF8Decoder = require('./lib/utf8-decoder')
 const PassThroughDecoder = require('./lib/pass-through-decoder')
 const errors = require('./lib/errors')
 
+const { TransformStream } = require('bare-stream/web')
+
 exports.TextEncoder = class TextEncoder {
   // https://encoding.spec.whatwg.org/#dom-textencoder-encoding
   get encoding() {
@@ -50,6 +52,59 @@ exports.TextDecoder = class TextDecoder {
     if (options.stream) return result
 
     return result + this.decoder.flush()
+  }
+}
+
+// https://encoding.spec.whatwg.org/#interface-textencoderstream
+exports.TextEncoderStream = class TextEncoderStream {
+  constructor() {
+    const encoder = new exports.TextEncoder()
+
+    this._transform = new TransformStream({
+      // https://encoding.spec.whatwg.org/#encode-and-enqueue-a-chunk
+      transform(chunk, controller) {
+        controller.enqueue(encoder.encode(chunk))
+      }
+    })
+  }
+
+  get encoding() {
+    return 'utf-8'
+  }
+
+  get readable() {
+    return this._transform.readable
+  }
+
+  get writable() {
+    return this._transform.writable
+  }
+}
+
+// https://encoding.spec.whatwg.org/#textdecoderstream
+exports.TextDecoderStream = class TextDecoderStream {
+  constructor() {
+    const decoder = new exports.TextDecoder('utf-8')
+
+    this._transform = new TransformStream({
+      // https://encoding.spec.whatwg.org/#decode-and-enqueue-a-chunk
+      transform(chunk, controller) {
+        const value = decoder.decode(chunk, { stream: true })
+        if (value) controller.enqueue(value)
+      }
+    })
+  }
+
+  get encoding() {
+    return 'utf-8'
+  }
+
+  get readable() {
+    return this._transform.readable
+  }
+
+  get writable() {
+    return this._transform.writable
   }
 }
 
