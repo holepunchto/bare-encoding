@@ -12,10 +12,10 @@ npm i bare-encoding
 const { TextEncoder, TextDecoder } = require('bare-encoding')
 ```
 
-## License
-
-Apache-2.0
-
 ## API
 
 See the [`bare-encoding` reference](https://docs.pears.com/reference/bare/modules/bare-encoding).
+
+## License
+
+Apache-2.0
